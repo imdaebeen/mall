@@ -28,6 +28,8 @@ public class Delivery {
     private String adddress;
 
     private String status;
+    
+    private int qty;
 
     @PostPersist
     public void onPostPersist() {
@@ -50,54 +52,32 @@ public class Delivery {
 
     //<<< Clean Arch / Port Method
     public static void startDelivery(OrderPlaced orderPlaced) {
-        /** Example 1:  new item 
+        /** Example 1:  new item **/
         Delivery delivery = new Delivery();
-        repository().save(delivery);
-
-        DeliveryCompleted deliveryCompleted = new DeliveryCompleted(delivery);
-        deliveryCompleted.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
+        delivery.setOrderId(orderPlaced.getId());
+        delivery.setProductId(orderPlaced.getProductId());
+        delivery.setProductName(orderPlaced.getProductName());
+        delivery.setQty(orderPlaced.getQty());
+        delivery.setStatus("DELIVERY COMPLETED");
         
-        repository().findById(orderPlaced.get???()).ifPresent(delivery->{
-            
-            delivery // do something
-            repository().save(delivery);
-
-            DeliveryCompleted deliveryCompleted = new DeliveryCompleted(delivery);
-            deliveryCompleted.publishAfterCommit();
-
-         });
-        */
+        repository().save(delivery);
+        
+        DeliveryCompleted deliveryCompleted = new DeliveryCompleted(delivery);
+        deliveryCompleted.publishAfterCommit();       
 
     }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
     public static void cancelDelivery(OrderCanceled orderCanceled) {
-        /** Example 1:  new item 
-        Delivery delivery = new Delivery();
-        repository().save(delivery);
-
-        DeliveryCanceled deliveryCanceled = new DeliveryCanceled(delivery);
-        deliveryCanceled.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
         
-        repository().findById(orderCanceled.get???()).ifPresent(delivery->{
+        repository().findByOrderId(orderCanceled.getId()).ifPresent(delivery->{
             
-            delivery // do something
+            delivery.setStatus("DELIVERY CANCELED");
             repository().save(delivery);
 
             DeliveryCanceled deliveryCanceled = new DeliveryCanceled(delivery);
             deliveryCanceled.publishAfterCommit();
 
          });
-        */
 
     }
-    //>>> Clean Arch / Port Method
 
 }
