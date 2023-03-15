@@ -19,5 +19,5 @@ public class Mypage {
     private Long orderId;
     private Integer qty;
     private String address;
-    private String status;
+    private String status; 
 }
